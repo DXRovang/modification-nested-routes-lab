@@ -49,20 +49,27 @@ class SongsController < ApplicationController
   end
 
   def edit
-    # binding.pry
-    if params[:artist_id]
-      artist = Artist.find_by(id: params[:artist_id])
-      if artist != nil
-        @song = Song.find_by(id: params[:id])
-      else
+  # binding.pry
+    # @path = artist_songs_path(@artist)
+
+    if params[:artist_id] #if user sends an artist id
+      @artist = Artist.find_by(id: params[:artist_id])
+
+      if @artist.nil? #if the artist id bad, go to artists index
         redirect_to artists_path
+
+      else #if the artist id is good, set song var & go to artist songs index
+        @song = @artist.songs.find_by(artist_id: params[:artist_id])
+        redirect_to artist_songs_path(@artist)
       end
-    else
+
+    else #if the user does not send an artist id, set song var & go to regular edit
       @song = Song.find_by(id: params[:id])
     end
   end
 
   def update
+    # binding.pry
     @song = Song.find(params[:id])
 
     @song.update(song_params)
